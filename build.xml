@@ -36,21 +36,21 @@
 
     <!-- JUnit Testing -->
     <target name="junit" depends="compile">
-        <junit printsummary="yes" haltonfailure="yes" fork="true">
-            <classpath>
-                <pathelement location="build/classes"/>
-                <pathelement path="WebContent/WEB-INF/lib/junit.jar"/>
-                <pathelement path="WebContent/WEB-INF/lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
-            </classpath>
-
-            <!-- Test results go inside reports/junit -->
-            <formatter type="xml"/>
-            <batchtest todir="reports/junit">
-                <fileset dir="src">
-                    <include name="**/*Test*.java"/>
-                </fileset>
-            </batchtest>
+        <junit printsummary="yes" haltonfailure="no" failureproperty="test.failed">
+          <classpath>
+            <pathelement location="build/classes"/>
+            <pathelement path="WebContent/WEB-INF/lib/junit.jar"/>
+            <pathelement path="WebContent/WEB-INF/lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+          </classpath>
+          <batchtest todir="build/test-results">
+              <fileset dir="build/classes">
+                  <include name="**/*Test*.class"/>
+              </fileset>
+          </batchtest>
+          <formatter type="xml"/>
+          <formatter type="plain"/>
         </junit>
+        <fail if="test.failed" message="Some JUnit tests failed. See reports for details."/>
     </target>
 
     <!-- WAR Packaging -->
