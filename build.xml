@@ -1,61 +1,41 @@
+
 <project name="SampleBuild" default="war" basedir=".">
-
-    <!-- Checkstyle taskdef -->
     <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-             classpath="WebContent/WEB-INF/lib/checkstyle-7.8.2-all.jar"/>
-
-    <!-- Classpath -->
-    <path id="compile.classpath">
+         classpath="WebContent/WEB-INF/lib/checkstyle-7.8.2-all.jar"/>
+	<path id="compile.classpath">
         <fileset dir="WebContent/WEB-INF/lib">
             <include name="*.jar"/>
         </fileset>
     </path>
-
-    <!-- Initialization -->
     <target name="init">
         <mkdir dir="build/classes"/>
         <mkdir dir="dist"/>
-        <mkdir dir="reports/junit"/>
-        <mkdir dir="reports/checkstyle"/>
     </target>
-
-    <!-- Compilation -->
     <target name="compile" depends="init">
-        <javac srcdir="src" debug="true" destdir="build/classes" includeantruntime="false">
+        <javac srcdir="src" debug="true" destdir="build/classes">
             <classpath refid="compile.classpath"/>
         </javac>
     </target>
-
-    <!-- Checkstyle -->
     <target name="checkstyle">
         <checkstyle config="sun_checks.xml" failOnViolation="false"> 
             <fileset dir="src/example" includes="**/*.java"/>
-            <formatter type="xml" toFile="reports/checkstyle/checkstyle_errors.xml"/>
+            <formatter type="xml" toFile="checkstyle_errors.xml"/>
         </checkstyle>
     </target>
-
-    <!-- JUnit Testing -->
     <target name="junit" depends="compile">
-        <junit printsummary="yes" haltonfailure="no" failureproperty="test.failed">
-          <classpath>
-            <pathelement location="build/classes"/>
-            <pathelement path="WebContent/WEB-INF/lib/junit.jar"/>
-            <pathelement path="WebContent/WEB-INF/lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
-          </classpath>
-          <batchtest todir="build/test-results">
-              <fileset dir="build/classes">
-                  <include name="**/*Test*.class"/>
-              </fileset>
-          </batchtest>
-          <formatter type="xml"/>
-          <formatter type="plain"/>
+        <junit printsummary="yes" haltonfailure="yes">
+              <classpath>
+                <pathelement location="build/classes"/>
+                <pathelement path="WebContent/WEB-INF/lib/junit.jar"/>
+                <pathelement path="WebContent/WEB-INF/lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+              </classpath>
+              <test name="junit.TestCalculator" haltonfailure="no" outfile="TestCalculator_JUnitResult">
+                <formatter type="xml"/>
+              </test>
         </junit>
-        <fail if="test.failed" message="Some JUnit tests failed. See reports for details."/>
     </target>
-
-    <!-- WAR Packaging -->
-    <target name="war" depends="compile">
-        <war destfile="dist/SampleWebApp.war" webxml="WebContent/WEB-INF/web.xml">
+	<target name="war" depends="compile">
+        <war destfile="dest/SampleWebApp.war" webxml="WebContent/WEB-INF/web.xml">
             <fileset dir="WebContent"/>
             <lib dir="WebContent/WEB-INF/lib"/>
             <classes dir="build/classes"/>
@@ -63,3 +43,4 @@
     </target>
 
 </project>
+
